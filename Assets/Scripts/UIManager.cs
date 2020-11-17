@@ -6,35 +6,15 @@ public class UIManager : MonoBehaviour
 {
 
     [SerializeField]
-    private Text _scoreLabel;
-
-    [SerializeField]
     private Text _gameOverMessage;
 
     [SerializeField]
     private Text _restartText;
 
-    [SerializeField]
-    private Image _livesImage;
-
-    [SerializeField]
-    private Sprite[] _liveSprites;
-
     void Start()
     {
-        _scoreLabel.text = "Score: " + 0;
         _gameOverMessage.gameObject.SetActive(false);
         _restartText.gameObject.SetActive(false);
-    }
-
-    public void SetScore(int score)
-    {
-        _scoreLabel.text = "Score: " + score;
-    }
-
-    public void SetLives(int currentLives)
-    {
-        _livesImage.sprite = _liveSprites[currentLives];
     }
 
     public void ShowGameOver()

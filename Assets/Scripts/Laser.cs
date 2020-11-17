@@ -10,6 +10,8 @@ public class Laser : MonoBehaviour
     [SerializeField]
     private bool _isEnemyLaser = false;
 
+    public Player player = null;
+
     private Vector3 _direction = Vector3.up;
 
     void Start()

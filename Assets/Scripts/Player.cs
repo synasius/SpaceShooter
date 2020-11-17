@@ -44,7 +44,16 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _score = 0;
 
-    private UIManager _uiManager;
+    [SerializeField]
+    private UIPlayerManager _uiManager;
+
+    [SerializeField]
+    private bool _isPlayerTwo = false;
+
+    private string _horizontalAxis = "Horizontal";
+    private string _verticalAxis = "Vertical";
+    private KeyCode _fireButton = KeyCode.Space;
+
     private GameManager _gameManager;
 
     private AudioSource _laserSound;
@@ -52,6 +61,13 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (_isPlayerTwo)
+        {
+            _horizontalAxis = "Horizontal2";
+            _verticalAxis = "Vertical2";
+            _fireButton = KeyCode.LeftShift;
+        }
+
         if (Random.value > 0.5)
         {
             _engines = new GameObject[] { _rightEngine, _leftEngine };
@@ -59,12 +75,6 @@ public class Player : MonoBehaviour
         else
         {
             _engines = new GameObject[] { _leftEngine, _rightEngine };
-        }
-
-        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
-        if (_uiManager == null)
-        {
-            Debug.LogAssertion("The UIManager is Null");
         }
 
         _gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
@@ -85,7 +95,7 @@ public class Player : MonoBehaviour
     {
         CalculateMovement();
 
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
+        if (Input.GetKeyDown(_fireButton) && Time.time > _canFire)
         {
             Firing();
         }
@@ -93,8 +103,8 @@ public class Player : MonoBehaviour
 
     void CalculateMovement()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        float horizontalInput = Input.GetAxis(_horizontalAxis);
+        float verticalInput = Input.GetAxis(_verticalAxis);
         transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * _speed * _speedBoost * Time.deltaTime);
 
         transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -3.7f, 5.8f), 0);
@@ -117,11 +127,17 @@ public class Player : MonoBehaviour
             weaponPrefab = _tripleLaserPrefab;
         }
 
-        Instantiate(
+        GameObject shot = Instantiate(
             weaponPrefab,
             new Vector3(transform.position.x, transform.position.y + _laserOffset),
             Quaternion.identity
         );
+        // Attach player information to the lasers so that they know which player
+        // has shoot and add score to correct one if the shot hits an enemy.
+        foreach (Laser laser in shot.GetComponentsInChildren<Laser>())
+        {
+            laser.player = this;
+        }
 
         _laserSound.Play();
     }
@@ -150,7 +166,7 @@ public class Player : MonoBehaviour
 
         if (_lives < 1)
         {
-            _gameManager.GameOver();
+            _gameManager.PlayerDead();
             Destroy(gameObject);
         }
     }

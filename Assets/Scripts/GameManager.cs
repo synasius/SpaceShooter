@@ -8,6 +8,11 @@ public class GameManager : MonoBehaviour
     private UIManager _uiManager;
     private bool _isGameOver = false;
 
+    [SerializeField]
+    private bool _isCoOpMode = false;
+
+    private int _deadPlayers = 0;
+
     void Start()
     {
         _isGameOver = false;
@@ -37,7 +42,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void GameOver()
+    public void PlayerDead()
+    {
+        _deadPlayers += 1;
+
+        if (_isCoOpMode && _deadPlayers < 2)
+        {
+            return;
+        }
+
+        GameOver();
+    }
+
+    private void GameOver()
     {
         _isGameOver = true;
 

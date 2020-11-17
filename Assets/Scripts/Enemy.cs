@@ -9,8 +9,6 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private GameObject _enemyLaserPrefab;
 
-    private Player _player;
-
     private Animator _animator;
     private AudioSource _explosionSound;
 
@@ -18,7 +16,6 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
-        _player = GameObject.Find("Player").GetComponent<Player>();
         _animator = gameObject.GetComponent<Animator>();
         _explosionSound = GetComponent<AudioSource>();
 
@@ -39,8 +36,9 @@ public class Enemy : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            Player player = other.GetComponent<Player>();
+            player.Damage();
             _explosionSound.Play();
-            _player.Damage();
             _animator.SetTrigger("OnEnemyDeath");
             _speed = 0.5f;
 
@@ -49,9 +47,13 @@ public class Enemy : MonoBehaviour
 
         if (other.CompareTag("Laser"))
         {
+            Laser laser = other.GetComponent<Laser>();
+            if (laser.player != null)
+            {
+                laser.player.AddScore(10);
+            }
             _explosionSound.Play();
             Destroy(other.gameObject);
-            _player.AddScore(10);
             _animator.SetTrigger("OnEnemyDeath");
             _speed = 0.5f;
 
