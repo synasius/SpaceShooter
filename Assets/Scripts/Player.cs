@@ -109,8 +109,6 @@ public class Player : MonoBehaviour
         float horizontalInput = Input.GetAxis(_horizontalAxis);
         float verticalInput = Input.GetAxis(_verticalAxis);
 
-        _animator.SetBool("Left", horizontalInput < 0);
-        _animator.SetBool("Right", horizontalInput > 0);
         _animator.SetFloat("Motion", Mathf.Abs(horizontalInput));
         _animator.SetFloat("Movement", horizontalInput);
 
