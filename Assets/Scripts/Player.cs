@@ -58,6 +58,8 @@ public class Player : MonoBehaviour
 
     private AudioSource _laserSound;
 
+    private Animator _animator;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -67,6 +69,7 @@ public class Player : MonoBehaviour
             _verticalAxis = "Vertical2";
             _fireButton = KeyCode.LeftShift;
         }
+        _animator = GetComponent<Animator>();
 
         if (Random.value > 0.5)
         {
@@ -105,6 +108,12 @@ public class Player : MonoBehaviour
     {
         float horizontalInput = Input.GetAxis(_horizontalAxis);
         float verticalInput = Input.GetAxis(_verticalAxis);
+
+        _animator.SetBool("Left", horizontalInput < 0);
+        _animator.SetBool("Right", horizontalInput > 0);
+        _animator.SetFloat("Motion", Mathf.Abs(horizontalInput));
+        _animator.SetFloat("Movement", horizontalInput);
+
         transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * _speed * _speedBoost * Time.deltaTime);
 
         transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, -3.7f, 5.8f), 0);
